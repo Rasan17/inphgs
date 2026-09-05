@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iNPHGS Calculator - Idiopathic Normal Pressure Hydrocephalus Grading Scale</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #38bdf8;
+            --accent-indigo: #6366f1;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 10px 25px -5px rgba(56, 189, 248, 0.2);
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-border: rgba(0, 0, 0, 0.08);
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
+            --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-glow: 0 10px 25px -5px rgba(99, 102, 241, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px 16px 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            max-width: 1050px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Header Bar */
+        .app-header {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 24px 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .header-title-group h1 {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-title-group .subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .header-title-group .copyright {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 3px;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-icon:hover {
+            transform: translateY(-1px);
+            background: var(--accent-indigo);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Patient Meta Bar */
+        .patient-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-control {
+            background: var(--bg-primary);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            color: var(--text-primary);
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+        }
+
+        /* Mode Selector Tabs */
+        .mode-tabs {
+            display: flex;
+            background: var(--bg-secondary);
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            width: fit-content;
+        }
+
+        .mode-tab {
+            padding: 8px 18px;
+            font-size: 12.5px;
+            font-weight: 600;
+            border-radius: 7px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-tab.active {
+            background: var(--accent-indigo);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(99, 102, 241, 0.35);
+        }
+
+        /* Triad Grid */
+        .triad-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .domain-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: var(--shadow-subtle);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .domain-card:hover {
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+
+        .domain-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .domain-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .domain-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .domain-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .domain-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .domain-score-pill {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--card-border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-blue);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Radio Options */
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .option-item:hover {
+            background: var(--bg-tertiary);
+            border-color: rgba(56, 189, 248, 0.4);
+            transform: translateX(3px);
+        }
+
+        .option-item.selected {
+            background: rgba(99, 102, 241, 0.12);
+            border-color: var(--accent-indigo);
+            box-shadow: 0 0 0 1px var(--accent-indigo);
+        }
+
+        .score-circle {
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.2s;
+            margin-top: 1px;
+        }
+
+        .option-item.selected .score-circle {
+            background: var(--accent-indigo);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        }
+
+        .option-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .option-label {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .option-detail {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        /* Results & Score Summary Card */
+        .summary-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+            border: 1.5px solid var(--accent-indigo);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            box-shadow: var(--shadow-glow);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .summary-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .score-display-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .score-main {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+        }
+
+        .score-number {
+            font-size: 56px;
+            font-weight: 900;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .score-max {
+            font-size: 20px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .severity-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            width: fit-content;
+        }
+
+        .severity-mild { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); border: 1px solid var(--accent-emerald); }
+        .severity-mod { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid var(--accent-amber); }
+        .severity-sev { background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); border: 1px solid var(--accent-rose); }
+
+        .domain-breakdown-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .breakdown-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .breakdown-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .bar-track {
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .bar-gait { background: linear-gradient(90deg, #38bdf8, #0284c7); }
+        .bar-cog { background: linear-gradient(90deg, #a855f7, #6366f1); }
+        .bar-uri { background: linear-gradient(90deg, #f59e0b, #ea580c); }
+
+        /* Report & Actions */
+        .actions-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .action-buttons-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-1px);
+        }
+
+        .report-preview {
+            background: var(--bg-primary);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 14px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-primary);
+            line-height: 1.6;
+            white-space: pre-wrap;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        /* Footer & Attribution */
+        .app-footer {
+            margin-top: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 20px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .footer-author {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .footer-dedication {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent-blue);
+            font-style: italic;
+        }
+
+        .footer-ref {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--accent-indigo);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Modal Dialog */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            padding: 16px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-xl);
+            padding: 28px;
+            max-width: 540px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 12px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        @media print {
+            body {
+                background: #ffffff;
+                color: #000000;
+                padding: 0;
+            }
+            .header-actions, .action-buttons-row, .btn-icon, .mode-tabs {
+                display: none !important;
+            }
+            .card-bg, .domain-card, .summary-card, .actions-card {
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .score-number {
+                -webkit-text-fill-color: #000000 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-title-group">
+            <h1>🧠 iNPHGS Calculator</h1>
+            <div class="subtitle">Idiopathic Normal Pressure Hydrocephalus Grading Scale (Kubo et al., 2008 / Mori et al., 2012)</div>
+            <div class="copyright">© G Narenthiran FRCS(SN), 2026</div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-icon" id="theme-toggle" title="Toggle Light/Dark Theme">🌓 Theme</button>
+            <button class="btn-icon" id="about-btn" title="About Software & Dedication">ℹ️ About</button>
+            <button class="btn-icon" id="reset-btn" title="Reset all scores to 0">🔄 Reset</button>
+        </div>
+    </header>
+
+    <!-- Patient Meta Information -->
+    <section class="patient-card">
+        <div class="form-group">
+            <label>Patient ID / Hospital No.</label>
+            <input type="text" id="patient-id" class="form-control" placeholder="e.g. HOSP-123456">
+        </div>
+        <div class="form-group">
+            <label>Assessment Context</label>
+            <select id="assessment-type" class="form-control">
+                <option value="Baseline / Diagnostic">Baseline / Diagnostic</option>
+                <option value="Pre-Tap Test">Pre-CSF Tap Test</option>
+                <option value="Post-Tap Test (24h)">Post-CSF Tap Test (24h)</option>
+                <option value="Pre-Shunt Surgery">Pre-Shunt Surgery</option>
+                <option value="Post-Shunt Follow-up (1m)">Post-Shunt Follow-up (1 month)</option>
+                <option value="Post-Shunt Follow-up (3m)">Post-Shunt Follow-up (3 months)</option>
+                <option value="Post-Shunt Follow-up (1y)">Post-Shunt Follow-up (1 year)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Assessor / Clinician</label>
+            <input type="text" id="assessor-name" class="form-control" placeholder="Clinician name / Neurosurgeon" value="Dr G Narenthiran">
+        </div>
+        <div class="form-group">
+            <label>Date of Assessment</label>
+            <input type="date" id="assessment-date" class="form-control">
+        </div>
+    </section>
+
+    <!-- Triad Domains -->
+    <main class="triad-grid">
+        <!-- Domain 1: Gait Disturbance -->
+        <article class="domain-card" id="card-gait">
+            <div class="domain-header">
+                <div class="domain-title-group">
+                    <div class="domain-badge">🚶</div>
+                    <div>
+                        <div class="domain-title">1. Gait Disturbance</div>
+                        <div class="domain-desc">Evaluate walking stability, posture, cadence, and requirement of aids</div>
+                    </div>
+                </div>
+                <div class="domain-score-pill" id="pill-gait">Score: 0 / 4</div>
+            </div>
+            <div class="option-list" id="options-gait">
+                <div class="option-item selected" data-domain="gait" data-score="0">
+                    <div class="score-circle">0</div>
+                    <div class="option-content">
+                        <div class="option-label">Normal</div>
+                        <div class="option-detail">No gait impairment; walks normally without instability.</div>
+                    </div>
+                </div>
+                <div class="option-item" data-domain="gait" data-score="1">
+                    <div class="score-circle">1</div>
+                    <div class="option-content">
+                        <div class="option-label">Complaint of instability / unsteadiness</div>
+                        <div class="option-detail">Subjective feeling of walking difficulty, dizziness or instability, but no objective gait impairment observed on physical examination.</div>
+                    </div>
+                </div>
+                <div class="option-item" data-domain="gait" data-score="2">
+                    <div class="score-circle">2</div>
+                    <div class="option-content">
+                        <div class="option-label">Mild gait disturbance (Independent)</div>
+                        <div class="option-detail">Objective gait impairment present (swaying, shuffling, widened base, turning difficulty), but capable of walking independently without walking aids or personal assistance.</div>
+                    </div>
+                </div>
+                <div class="option-item" data-domain="gait" data-score="3">
+                    <div class="score-circle">3</div>
+                    <div class="option-content">
+                        <div class="option-label">Moderate gait disturbance (Requires aids/support)</div>
+                        <div class="option-detail">Requires walking aids (cane, walker, crutches) or holding onto walls/furniture or personal support to walk.</div>
+                    </div>
+                </div>
+                <div class="option-item" data-domain="gait" data-score="4">
+                    <div class="score-circle">4</div>
+                    <div class="option-content">
+                        <div class="option-label">Severe gait disturbance (Unable to walk)</div>
+                        <div class="option-detail">Unable to walk even with walking aids; wheelchair-bound or bedridden.</div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Domain 2: Cognitive Impairment / Dementia -->
+        <article class="domain-card" id="card-cog">
+            <div class="domain-header">
+                <div class="domain-title-group">
+                    <div class="domain-badge">🧠</div>
+                    <div>
+                        <div class="domain-title">2. Cognitive Impairment / Dementia</div>
+                        <div class="domain-desc">Evaluate psychomotor slowing, memory, attention, apathy, and daily independence</div>
+                    </div>
+                </div>
+                <div class="domain-score-pill" id="pill-cog">Score: 0 / 4</div>
+            </div>
+            <div class="option-list" id="options-cog">
+                <div class="option-item selected" data-domain="cog" data-score="0">
+                    <div class="score-circle">0</div>
+                    <div class="option-content">
+                        <div class="option-label">Normal</div>
+                        <div class="option-detail">No cognitive complaints or objective impairment.</div>
+                    </div>
+                </div>
+                <div class="option-item" data-domain="cog" data-score="1">
+                    <div class="score-circle">1</div>
+                    <div class="option-content">
+                        <div class="option-label">Subjective cognitive complaint or apathy</div>
+                        <div class="option-detail">Complaint of memory decline, reduced spontaneity, or apathy, but no objective impairment on clinical interview or daily life activities.</div>
+                    </div>
+                </div>
+                <div class="option-item" data-domain="cog" data-score="2">
+                    <div class="score-circle">2</div>
+                    <div class="option-content">
+                        <div class="option-label">Mild cognitive impairment</div>
+                        <div class="option-detail">Definite cognitive impairment (forgetfulness, psychomotor slowing, disorientation), but fully independent in basic activities of daily living (ADLs) without supervision.</div>
+                    </div>
+                </div>
+                <div class="option-item" data-domain="cog" data-score="3">
+                    <div class="score-circle">3</div>
+                    <div class="option-content">
+                        <div class="option-label">Moderate cognitive impairment</div>
+                        <div class="option-detail">Requires partial assistance or supervision in daily living due to disorientation or dementia, but capable of meaningful communication.</div>
+                    </div>
+                </div>
+                <div class="option-item" data-domain="cog" data-score="4">
+                    <div class="score-circle">4</div>
+                    <div class="option-content">
+                        <div class="option-label">Severe cognitive impairment</div>
+                        <div class="option-detail">Severe dementia requiring continuous total care; unable to communicate or engage in meaningful conversation.</div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Domain 3: Urinary Disturbance -->
+        <article class="domain-card" id="card-uri">
+            <div class="domain-header">
+                <div class="domain-title-group">
+                    <div class="domain-badge">💧</div>
+                    <div>
+                        <div class="domain-title">3. Urinary Disturbance</div>
+                        <div class="domain-desc">Evaluate frequency, urgency, nocturia, and incontinence episodes</div>
+                    </div>
+                </div>
+                <div class="domain-score-pill" id="pill-uri">Score: 0 / 4</div>
+            </div>
+            <div class="option-list" id="options-uri">
+                <div class="option-item selected" data-domain="uri" data-score="0">
+                    <div class="score-circle">0</div>
+                    <div class="option-content">
+                        <div class="option-label">Normal</div>
+                        <div class="option-detail">No urinary symptoms or frequency.</div>
+                    </div>
+                </div>
+                <div class="option-item" data-domain="uri" data-score="1">
+                    <div class="score-circle">1</div>
+                    <div class="option-content">
+                        <div class="option-label">Pollakisuria (Frequency) / Urgency</div>
+                        <div class="option-detail">Frequent urination (pollakisuria), nocturia, or subjective urinary urgency, without any incontinence.</div>
+                    </div>
+                </div>
+                <div class="option-item" data-domain="uri" data-score="2">
+                    <div class="score-circle">2</div>
+                    <div class="option-content">
+                        <div class="option-label">Occasional urinary incontinence</div>
+                        <div class="option-detail">Urgent incontinence or occasional incontinence episodes occurring less than once daily (e.g. 1 to several times a week).</div>
+                    </div>
+                </div>
+                <div class="option-item" data-domain="uri" data-score="3">
+                    <div class="score-circle">3</div>
+                    <div class="option-content">
+                        <div class="option-label">Frequent urinary incontinence</div>
+                        <div class="option-detail">Frequent urinary incontinence occurring daily (once or more per day, regularly requiring pads/diapers).</div>
+                    </div>
+                </div>
+                <div class="option-item" data-domain="uri" data-score="4">
+                    <div class="score-circle">4</div>
+                    <div class="option-content">
+                        <div class="option-label">Complete urinary incontinence</div>
+                        <div class="option-detail">Loss of all urinary control / continuous total incontinence or indwelling urinary catheter dependent.</div>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Score Summary & Interpretation Card -->
+    <section class="summary-card">
+        <div class="score-display-box">
+            <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px;">
+                Total iNPHGS Score
+            </div>
+            <div class="score-main">
+                <span class="score-number" id="total-score">0</span>
+                <span class="score-max">/ 12</span>
+            </div>
+            <div class="severity-badge severity-mild" id="severity-badge">
+                Normal (No Triad Symptoms)
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;" id="severity-desc">
+                Patient exhibits no clinical triad signs of normal pressure hydrocephalus.
+            </div>
+        </div>
+
+        <div class="domain-breakdown-bars">
+            <div class="breakdown-row">
+                <div class="breakdown-meta">
+                    <span>🚶 Gait Disturbance</span>
+                    <span id="label-bar-gait">0 / 4</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill bar-gait" id="bar-gait" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div class="breakdown-row">
+                <div class="breakdown-meta">
+                    <span>🧠 Cognitive Impairment</span>
+                    <span id="label-bar-cog">0 / 4</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill bar-cog" id="bar-cog" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div class="breakdown-row">
+                <div class="breakdown-meta">
+                    <span>💧 Urinary Disturbance</span>
+                    <span id="label-bar-uri">0 / 4</span>
+                </div>
+                <div class="bar-track">
+                    <div class="bar-fill bar-uri" id="bar-uri" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Clinical Report & Actions -->
+    <section class="actions-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="font-size: 15px; font-weight: 700; color: var(--text-primary);">
+                📋 Clinical Documentation Summary
+            </div>
+            <div class="action-buttons-row">
+                <button class="btn-primary" id="copy-btn">📋 Copy Summary</button>
+                <button class="btn-secondary" id="email-btn">✉️ Email Report</button>
+                <button class="btn-secondary" id="print-btn">🖨️ Print / PDF</button>
+            </div>
+        </div>
+        <div class="report-preview" id="report-text"></div>
+    </section>
+
+    <!-- Footer Attribution & Dedicated Note -->
+    <footer class="app-footer">
+        <div class="footer-author">
+            Software Developed by <strong>Dr G Narenthiran</strong> BSc(MedSci)(Hons) MB ChB MRCSE FEBNS, FRCS(SN), Southampton, UK. 
+            <a href="mailto:g_narenthiran@hotmail.com" style="color: var(--accent-blue); text-decoration: none;">g_narenthiran@hotmail.com</a>
+        </div>
+        <div class="footer-dedication">
+            Software dedicated to Mrs Nirmaladevy Ganesalingam BSc (mother)
+        </div>
+        <div class="footer-ref">
+            <strong>Clinical References:</strong><br>
+            1. Kubo Y, Kazui H, Yoshida T, et al. Validation of a modified idiopathic normal pressure hydrocephalus grading scale (iNPHGS) for evaluating tap test response. <em>Neurol Med Chir (Tokyo)</em> 2008;48(7):275-281.<br>
+            2. Mori E, Ishikawa M, Kato T, et al. Guidelines for management of idiopathic normal pressure hydrocephalus: second edition. <em>Neurol Med Chir (Tokyo)</em> 2012;52(11):775-809.
+        </div>
+    </footer>
+</div>
+
+<!-- Modal Dialog for About -->
+<div class="modal-overlay" id="about-modal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 class="modal-title">About iNPHGS Calculator</h3>
+            <button class="btn-icon" id="close-about-btn" style="padding: 4px 10px;">✕</button>
+        </div>
+        <div style="font-size: 13.5px; line-height: 1.6; color: var(--text-primary);">
+            <p style="margin-bottom: 12px;">
+                <strong>Software Developed by:</strong><br>
+                Dr G Narenthiran BSc(MedSci)(Hons) MB ChB MRCSE FEBNS, FRCS(SN)<br>
+                Southampton, UK.<br>
+                Email: <a href="mailto:g_narenthiran@hotmail.com" style="color: var(--accent-blue);">g_narenthiran@hotmail.com</a>
+            </p>
+            <p style="margin-bottom: 12px; color: var(--accent-indigo); font-weight: 600; font-style: italic;">
+                Software dedicated to Mrs Nirmaladevy Ganesalingam BSc (mother)
+            </p>
+            <hr style="border: none; border-top: 1px solid var(--card-border); margin: 12px 0;">
+            <p style="font-size: 12px; color: var(--text-secondary);">
+                <strong>iNPHGS Clinical Scoring:</strong><br>
+                The idiopathic Normal Pressure Hydrocephalus Grading Scale (iNPHGS) evaluates the clinical triad of gait disturbance, cognitive impairment, and urinary incontinence. An improvement of &ge;1 point on iNPHGS following CSF tap test or shunt surgery is standard evidence of positive shunt responsiveness.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast">Summary copied to clipboard!</div>
+
+<script>
+    // State
+    const scores = {
+        gait: 0,
+        cog: 0,
+        uri: 0
+    };
+
+    const descriptions = {
+        gait: [
+            "0 - Normal (No gait impairment)",
+            "1 - Complaint of unsteadiness, but no objective gait impairment observed",
+            "2 - Mild gait disturbance, independent walking without aids",
+            "3 - Moderate gait disturbance, requires walking aids/support",
+            "4 - Severe gait disturbance, unable to walk / wheelchair-bound / bedridden"
+        ],
+        cog: [
+            "0 - Normal (No cognitive impairment)",
+            "1 - Subjective cognitive complaint or apathy, but no objective daily impairment",
+            "2 - Mild cognitive impairment, independent in basic ADLs without supervision",
+            "3 - Moderate cognitive impairment, requires partial assistance/supervision",
+            "4 - Severe cognitive impairment, continuous total care required"
+        ],
+        uri: [
+            "0 - Normal (No urinary disturbance)",
+            "1 - Pollakisuria (frequency) / urgency without incontinence",
+            "2 - Occasional urinary incontinence (< once daily / few times weekly)",
+            "3 - Frequent urinary incontinence (daily, requires pads)",
+            "4 - Complete continuous incontinence / catheter dependent"
+        ]
+    };
+
+    // Set today's date by default
+    document.getElementById('assessment-date').valueAsDate = new Date();
+
+    // Setup Option Selection
+    document.querySelectorAll('.option-item').forEach(item => {
+        item.addEventListener('click', () => {
+            const domain = item.getAttribute('data-domain');
+            const score = parseInt(item.getAttribute('data-score'), 10);
+            
+            // Unselect sibling items
+            const parent = item.parentElement;
+            parent.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
+            
+            // Select this item
+            item.classList.add('selected');
+            scores[domain] = score;
+
+            // Update UI
+            updateUI();
+        });
+    });
+
+    function updateUI() {
+        // Update domain pill badges
+        document.getElementById('pill-gait').textContent = `Score: ${scores.gait} / 4`;
+        document.getElementById('pill-cog').textContent = `Score: ${scores.cog} / 4`;
+        document.getElementById('pill-uri').textContent = `Score: ${scores.uri} / 4`;
+
+        // Update breakdown bars
+        document.getElementById('label-bar-gait').textContent = `${scores.gait} / 4`;
+        document.getElementById('bar-gait').style.width = `${(scores.gait / 4) * 100}%`;
+
+        document.getElementById('label-bar-cog').textContent = `${scores.cog} / 4`;
+        document.getElementById('bar-cog').style.width = `${(scores.cog / 4) * 100}%`;
+
+        document.getElementById('label-bar-uri').textContent = `${scores.uri} / 4`;
+        document.getElementById('bar-uri').style.width = `${(scores.uri / 4) * 100}%`;
+
+        // Calculate total
+        const total = scores.gait + scores.cog + scores.uri;
+        document.getElementById('total-score').textContent = total;
+
+        // Severity interpretation
+        const badge = document.getElementById('severity-badge');
+        const desc = document.getElementById('severity-desc');
+        badge.className = 'severity-badge';
+
+        if (total === 0) {
+            badge.classList.add('severity-mild');
+            badge.textContent = 'Normal (0 / 12)';
+            desc.textContent = 'Patient exhibits no clinical triad signs of normal pressure hydrocephalus.';
+        } else if (total <= 3) {
+            badge.classList.add('severity-mild');
+            badge.textContent = `Mild Triad Impairment (${total} / 12)`;
+            desc.textContent = 'Mild clinical symptoms. Favorable potential response candidate upon tap test confirmation.';
+        } else if (total <= 7) {
+            badge.classList.add('severity-mod');
+            badge.textContent = `Moderate Triad Impairment (${total} / 12)`;
+            desc.textContent = 'Moderate clinical triad burden affecting daily functional independence.';
+        } else {
+            badge.classList.add('severity-sev');
+            badge.textContent = `Severe Triad Impairment (${total} / 12)`;
+            desc.textContent = 'Severe triad deficit requiring comprehensive functional care and assistance.';
+        }
+
+        // Generate report text
+        generateReport();
+    }
+
+    function generateReport() {
+        const patientId = document.getElementById('patient-id').value.trim() || 'N/A';
+        const context = document.getElementById('assessment-type').value;
+        const assessor = document.getElementById('assessor-name').value.trim() || 'Dr G Narenthiran';
+        const date = document.getElementById('assessment-date').value || new Date().toISOString().split('T')[0];
+        const total = scores.gait + scores.cog + scores.uri;
+
+        const report = `========================================================
+iNPHGS CLINICAL ASSESSMENT REPORT
+Idiopathic Normal Pressure Hydrocephalus Grading Scale
+========================================================
+Date: ${date}
+Patient ID: ${patientId}
+Assessment Context: ${context}
+Assessor: ${assessor}
+
+--------------------------------------------------------
+SCORES BREAKDOWN:
+--------------------------------------------------------
+1. Gait Disturbance:      ${scores.gait} / 4
+   ↳ ${descriptions.gait[scores.gait]}
+
+2. Cognitive Impairment:  ${scores.cog} / 4
+   ↳ ${descriptions.cog[scores.cog]}
+
+3. Urinary Disturbance:   ${scores.uri} / 4
+   ↳ ${descriptions.uri[scores.uri]}
+
+--------------------------------------------------------
+TOTAL iNPHGS SCORE: ${total} / 12
+--------------------------------------------------------
+Interpretation: ${document.getElementById('severity-badge').textContent}
+Clinical Context: Improvement of ≥1 point on iNPHGS indicates a positive response to CSF drainage / shunt surgery.
+
+Developed by Dr G Narenthiran FRCS(SN), Southampton, UK
+Dedicated to Mrs Nirmaladevy Ganesalingam BSc (mother)
+========================================================`;
+
+        document.getElementById('report-text').textContent = report;
+    }
+
+    // Input changes
+    ['patient-id', 'assessment-type', 'assessor-name', 'assessment-date'].forEach(id => {
+        document.getElementById(id).addEventListener('input', generateReport);
+    });
+
+    // Theme Toggle
+    const themeBtn = document.getElementById('theme-toggle');
+    themeBtn.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+    });
+
+    // Reset Button
+    document.getElementById('reset-btn').addEventListener('click', () => {
+        scores.gait = 0;
+        scores.cog = 0;
+        scores.uri = 0;
+        document.querySelectorAll('.option-list').forEach(list => {
+            list.querySelectorAll('.option-item').forEach((item, idx) => {
+                if (idx === 0) item.classList.add('selected');
+                else item.classList.remove('selected');
+            });
+        });
+        updateUI();
+        showToast("Scores reset to 0");
+    });
+
+    // Copy to clipboard
+    document.getElementById('copy-btn').addEventListener('click', () => {
+        const text = document.getElementById('report-text').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+            showToast("✓ Clinical report copied to clipboard!");
+        });
+    });
+
+    // Email Button
+    document.getElementById('email-btn').addEventListener('click', () => {
+        const patientId = document.getElementById('patient-id').value.trim() || 'Patient';
+        const context = document.getElementById('assessment-type').value;
+        const total = scores.gait + scores.cog + scores.uri;
+        const subject = encodeURIComponent(`iNPHGS Report - ${patientId} (${context}) - Total: ${total}/12`);
+        const body = encodeURIComponent(document.getElementById('report-text').textContent);
+        window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    });
+
+    // Print Button
+    document.getElementById('print-btn').addEventListener('click', () => {
+        window.print();
+    });
+
+    // About Modal
+    const modal = document.getElementById('about-modal');
+    document.getElementById('about-btn').addEventListener('click', () => {
+        modal.classList.add('active');
+    });
+    document.getElementById('close-about-btn').addEventListener('click', () => {
+        modal.classList.remove('active');
+    });
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+    });
+
+    // Toast function
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    // Initialize UI
+    updateUI();
+</script>
+
+</body>
+</html>
